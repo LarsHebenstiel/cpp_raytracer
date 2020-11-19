@@ -9,6 +9,7 @@ class vec3 {
         vec3();
         vec3(double x, double y, double z);
         double norm();
+        void normalize();
 };
 
 #endif

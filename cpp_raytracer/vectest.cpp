@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include "vec.h"
 
 using std::cout;
@@ -7,9 +8,16 @@ using std::endl;
 
 int main() {
 
-    vec3 v(1,1,1);
+    vec3 v(3,4,3);
 
-    cout << v.norm() << endl;
+    cout << "Vector norm is: " << v.norm() << endl;
+
+
+    cout << "Normalizing!" << endl;
+
+    v.normalize();
+
+    cout << "Vector norm is: " << v.norm() << endl;
 
     return 0;
 }

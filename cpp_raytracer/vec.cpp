@@ -16,3 +16,10 @@ vec3::vec3() {
 double vec3::norm() {
     return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 }
+
+void vec3::normalize() {
+    double norm = this->norm();
+    this->x /= norm;
+    this->y /= norm;
+    this->z /= norm;
+}
