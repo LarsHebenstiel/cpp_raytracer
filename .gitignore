@@ -1,5 +1,6 @@
 # I'm on mac
 *.DS_Store
+*.dSYM/
 
 # Prerequisites
 *.d

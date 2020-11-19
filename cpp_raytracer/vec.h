@@ -6,8 +6,8 @@ class vec3 {
         double x;
         double y;
         double z;
-        vec3(double x, double y, double z);
         vec3();
+        vec3(double x, double y, double z);
         double norm();
 };
 

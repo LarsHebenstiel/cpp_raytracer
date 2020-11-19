@@ -1,14 +1,18 @@
 #include "vec.h"
-#include <iostream>
+#include <cmath>
 
-using std::cout;
-using std::cin;
-using std::endl;
-
-int main() {
-
-    cout << "Test" << endl;;
-
-    return 0;
+vec3::vec3(double x, double y, double z) {
+    this->x = x;
+    this->y = y;
+    this->z = z;
 }
 
+vec3::vec3() {
+    this->x = 0;
+    this->y = 0;
+    this->z = 0;
+}
+
+double vec3::norm() {
+    return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
+}
