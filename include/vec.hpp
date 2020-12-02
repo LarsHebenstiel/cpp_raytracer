@@ -3,15 +3,9 @@
 
 class vec3d {
     public:
-        //data
-        union {
-            struct{
-                double x;
-                double y;
-                double z;
-            };
-            double v[3];
-        };
+        double x;
+        double y;
+        double z;
 
         //size of vector
         const static int n = 3;
@@ -27,16 +21,12 @@ class vec3d {
         //destructor
         ~vec3d();
 
-        // // printer method
-		// friend std::ostream& operator<<(std::ostream& os, const vec3d& v);
+        // printer method
+		friend std::ostream& operator<<(std::ostream& os, const vec3d& v);
 
         // //functions
         // double norm() const;
         // void normalize();
-
-        //read and write vec's with [] notation
-        double operator[](const int i) const;
-        double& operator[](const int i);
 
         //copy assignment to vector
         void operator=(const vec3d& v);
