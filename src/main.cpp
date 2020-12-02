@@ -18,5 +18,8 @@ int main() {
     cout << v + v + u << endl;
     cout << v * 2 + u << endl;
 
+    cout << v * 3 - u * 4 << endl;
+    cout << 3 * v - 4 * u << endl;
+
     return 0;
 }

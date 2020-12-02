@@ -50,6 +50,7 @@ class vec3d {
 
         //vector scalar product
         vec3d operator*(const double s) const;
+        friend vec3d operator*(double s, const vec3d& v);
         //vector scalar division
         vec3d operator/(const double s) const;
 

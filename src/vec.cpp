@@ -15,6 +15,10 @@ std::ostream& operator<<(std::ostream& os, const vec3d& v) {
 	return os;
 }
 
+vec3d operator*(double s, const vec3d&v) {
+	return v * s;
+}
+
 void vec3d::operator=(const vec3d& v) {this->x = v.x; this->y = v.y; this->z = v.z;}
 void vec3d::operator=(const double v[3]) {this->x = v[0]; this->y = v[1]; this->z = v[2];}
 
