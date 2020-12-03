@@ -24,9 +24,11 @@ class vec3d {
         // printer method
 		friend std::ostream& operator<<(std::ostream& os, const vec3d& v);
 
-        // //functions
-        // double norm() const;
-        // void normalize();
+        //vector norm
+        double norm() const;
+
+        //unit vector
+        vec3d unit_vector() const;
 
         //copy assignment to vector
         void operator=(const vec3d& v);
@@ -37,6 +39,8 @@ class vec3d {
         bool operator==(const vec3d& v) const;
         //vector inequality
         bool operator!=(const vec3d& v) const;
+        //vector negation
+        vec3d operator-() const;
 
         //vector addition
         vec3d operator+(const vec3d& v) const;
@@ -50,9 +54,15 @@ class vec3d {
 
         //vector scalar product
         vec3d operator*(const double s) const;
-        friend vec3d operator*(double s, const vec3d& v);
+        //vector scalar product
+        friend vec3d operator*(const double s, const vec3d& v);
+        //in place vector scalar product
+        void operator*=(const double s);
+
         //vector scalar division
         vec3d operator/(const double s) const;
+        //in place vector scalar division
+        void operator/=(const double s);
 
         //vector inner product
         double operator*(const vec3d& v) const;
@@ -61,5 +71,8 @@ class vec3d {
         //in place vector outer product
         void operator&=(const vec3d& v);
 };
+
+using point3d = vec3d; //3D point
+using color = vec3d; //RGB color
 
 #endif

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "vec.hpp"
+#include "vec3d.hpp"
 
 using std::cout;
 using std::endl;
@@ -13,10 +13,6 @@ vec3d::~vec3d() {}
 std::ostream& operator<<(std::ostream& os, const vec3d& v) {
 	os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
 	return os;
-}
-
-vec3d operator*(double s, const vec3d&v) {
-	return v * s;
 }
 
 void vec3d::operator=(const vec3d& v) {this->x = v.x; this->y = v.y; this->z = v.z;}
@@ -33,8 +29,15 @@ void vec3d::operator-=(const vec3d& v) {this->x -= v.x; this->y -= v.y; this->z 
 
 //vector scalar product
 vec3d vec3d::operator*(const double s) const {return vec3d(s * this->x, s * this->y, s * this->z);}
+//vector scalar product
+vec3d operator*(const double s, const vec3d&v) {return v * s;}
+//in place vector scalar product
+void vec3d::operator*=(const double s) {this->x *= s; this->y *= s; this->z *= s;}
+
 //vector scalar division
 vec3d vec3d::operator/(const double s) const {return vec3d(this->x / s, this->y / s, this->z / s);}
+//in place vector scalar division
+void vec3d::operator/=(const double s) {this->x /= s; this->y /= s; this->z /= s;}
 
 //vector inner product
 double vec3d::operator*(const vec3d& v) const {return this->x * v.x + this->y * v.y + this->z + v.z;}
@@ -42,3 +45,9 @@ double vec3d::operator*(const vec3d& v) const {return this->x * v.x + this->y * 
 vec3d vec3d::operator&(const vec3d& v) const {return vec3d(this->y*v.z - this->z*v.y, this->z*v.x - this->x*v.z, this->x*v.y - this->y*v.x);}
 //in place vector outer product
 void vec3d::operator&=(const vec3d& v) {*this = *this & v;}
+
+//vector norm
+double vec3d::norm() const {return *this * *this;}
+
+//unit vector
+vec3d vec3d::unit_vector() const {return *this / this->norm();}

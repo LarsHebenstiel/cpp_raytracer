@@ -5,6 +5,9 @@
 # Compiled Binary Executable
 /bin/*
 
+# Output image files
+*.ppm
+
 # Prerequisites
 *.d
 

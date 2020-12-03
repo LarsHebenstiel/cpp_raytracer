@@ -1,25 +1,27 @@
 #include<iostream>
-#include "vec.hpp"
+#include "vec3d.hpp"
+#include "color.hpp"
+#include "ray.hpp"
 
 using std::cout;
 using std::cin;
 using std::endl;
 
 int main() {
-    vec3d v(1,2,3);
-    vec3d u(3,4,1);
+    const int image_width = 256;
+    const int image_height = 256;
 
-    cout << v << endl;
-    cout << u << endl;
+    std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-    cout << v + u << endl;
-    cout << v - u << endl;
+    for (int j = image_height - 1; j >= 0; --j) {
+        std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+        for (int i = 0; i < image_width; ++i) {
+            color pixel_color(double(i)/(image_width-1), double(j)/(image_height-1), 0.25);
+            write_color(std::cout, pixel_color);
+        }
+    }
 
-    cout << v + v + u << endl;
-    cout << v * 2 + u << endl;
-
-    cout << v * 3 - u * 4 << endl;
-    cout << 3 * v - 4 * u << endl;
+    std::cerr << "\nDone.\n";
 
     return 0;
 }
