@@ -27,6 +27,10 @@ inline double random_double(double min, double max) {
     return distribution(generator);
 }
 
+inline double random_double(double max) {
+    return random_double(0.0, max);
+}
+
 inline double random_double() {
     return random_double(0.0, 1.0);
 }
