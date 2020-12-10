@@ -1,6 +1,9 @@
 #ifndef VEC_H
 #define VEC_H
 
+#include<cmath>
+#include<iostream>
+
 class vec3d {
     public:
         double x;
@@ -11,68 +14,129 @@ class vec3d {
         const static int n = 3;
 
         //default constructor
-        vec3d();
+        vec3d() : x{ 0 }, y{ 0 }, z{ 0 } {}
         //constructor: initializes to constant array with double e
-        vec3d(const double e);
+        vec3d(double e) : x{ e }, y{ e }, z{ e } {}
         //constructor: intializes to given values
-        vec3d(const double x, const double y, const double z);
+        vec3d(double x, double y, double z) : x{ x }, y{ y }, z{ z } {}
         //copy constructor
-        vec3d(const vec3d& v);
+        vec3d(const vec3d& u) : x{ u.x }, y{ u.y }, z{ u.z } {}
         //destructor
-        ~vec3d();
-
-        // printer method
-		friend std::ostream& operator<<(std::ostream& os, const vec3d& v);
-
-        //vector norm
-        double norm() const;
-
-        //unit vector
-        vec3d unit_vector() const;
+        ~vec3d() {}
 
         //copy assignment to vector
-        void operator=(const vec3d& v);
-        //copy assignment to array
-        void operator=(const double v[3]);
+        void operator=(const vec3d& v) {
+            this->x = v.x;
+            this->y = v.y;
+            this->z = v.z;
+        }
+        
+        //copy assignment to vector
+        void operator=(const double v[3]) {
+            this->x = v[0];
+            this->y = v[1];
+            this->z = v[2];
+        }
 
         //vector equality
-        bool operator==(const vec3d& v) const;
+        bool operator==(const vec3d& v) const {
+            return this->x == v.x && this->y == v.y && this->z == v.z;
+        }
         //vector inequality
-        bool operator!=(const vec3d& v) const;
+        bool operator!=(const vec3d& v) const {
+            return !(*this == v);
+        }
+
         //vector negation
-        vec3d operator-() const;
+        vec3d operator-() const {
+            return vec3d(this->x, this->y, this->z);
+        }
 
-        //vector addition
-        vec3d operator+(const vec3d& v) const;
         //in place vector addition
-        void operator+=(const vec3d& v);
+        void operator+=(const vec3d& v) {
+            this->x += v.x;
+            this->y += v.y;
+            this->z += v.z;
+        }
 
-        //vector subtraction
-        vec3d operator-(const vec3d& v) const;
         //in place vector subtraction
-        void operator-=(const vec3d& v);
+        void operator-=(const vec3d& v) {
+            this->x -= v.x;
+            this->y -= v.y;
+            this->z -= v.z;
+        }
 
-        //vector scalar product
-        vec3d operator*(const double s) const;
-        //vector scalar product
-        friend vec3d operator*(const double s, const vec3d& v);
-        //in place vector scalar product
-        void operator*=(const double s);
+        //in place vector scalar multiplication
+        void operator*=(double s) {
+            this->x *= s;
+            this->y *= s;
+            this->z *= s;
+        }
 
-        //vector scalar division
-        vec3d operator/(const double s) const;
         //in place vector scalar division
-        void operator/=(const double s);
+        void operator/=(double s) {
+            this->x /= s;
+            this->y /= s;
+            this->z /= s;
+        }
 
-        //vector inner product
-        double operator*(const vec3d& v) const;
-        //vector outer product
-        vec3d operator&(const vec3d& v) const;
-        //in place vector outer product
-        void operator&=(const vec3d& v);
+        inline double norm() const;
+
+        inline double squared_norm() const;
 };
 
 using point3d = vec3d; //3D point
 using color = vec3d; //RGB color
+
+// Utility functions
+inline double dot(const vec3d &u, const vec3d &v) {
+    return u.x * v.x + u.y * v.y + u.z * v.z;
+}
+
+inline vec3d cross(const vec3d &u, const vec3d &v) {
+    return vec3d(u.y * v.z - u.z * v.y,
+                u.z * v.x - u.x * v.z,
+                u.x * v.y - u.y * v.x);
+}
+
+inline double vec3d::norm() const {
+    return sqrt(dot(*this, *this));
+}
+
+inline double vec3d::squared_norm() const {
+    return dot(*this, *this);
+}
+
+inline std::ostream& operator<<(std::ostream &out, const vec3d &v) {
+    return out << '(' << v.x << ' ' << v.y << ' ' << v.z << ')';
+}
+
+inline vec3d operator+(const vec3d &u, const vec3d &v) {
+    return vec3d(u.x + v.x, u.y + v.y, u.z + v.z);
+}
+
+inline vec3d operator-(const vec3d &u, const vec3d &v) {
+    return vec3d(u.x - v.x, u.y - v.y, u.z - v.z);
+}
+
+inline vec3d operator*(const vec3d &u, const vec3d &v) {
+    return vec3d(u.x * v.x, u.y * v.y, u.z * v.z);
+}
+
+inline vec3d operator*(double t, const vec3d &v) {
+    return vec3d(t * v.x, t * v.y, t * v.z);
+}
+
+inline vec3d operator*(const vec3d &v, double t) {
+    return t * v;
+}
+
+inline vec3d operator/(vec3d v, double t) {
+    return (1/t) * v;
+}
+
+inline vec3d unit_vector(const vec3d& v) {
+    return v / v.norm();
+}
 
 #endif
