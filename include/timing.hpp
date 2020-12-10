@@ -12,12 +12,12 @@ class Timer{
             t1 = std::chrono::high_resolution_clock::now();
         }
 
-        auto elapsedMilli() {
+        long long elapsedMilli() {
             auto t2 = std::chrono::high_resolution_clock::now();
             return std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
         }
 
-        auto elapsedMicro() {
+        long long elapsedMicro() {
             auto t2 = std::chrono::high_resolution_clock::now();
             return std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
         }

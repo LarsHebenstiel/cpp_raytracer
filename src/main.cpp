@@ -13,9 +13,9 @@ using std::endl;
 
 double hit_sphere(const point3d& center, double radius, const ray& r) {
     vec3d oc = r.orig - center;
-    double a = r.dir.squared_norm();
+    double a = r.dir.norm_squared();
     double half_b = dot(oc,r.dir);
-    double c = oc.squared_norm() - radius * radius;
+    double c = oc.norm_squared() - radius * radius;
     double discrim = half_b * half_b - a * c;
     if (discrim < 0) {
         return -1.0;

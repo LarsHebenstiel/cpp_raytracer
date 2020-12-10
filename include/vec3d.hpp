@@ -82,7 +82,7 @@ class vec3d {
 
         inline double norm() const;
 
-        inline double squared_norm() const;
+        inline double norm_squared() const;
 };
 
 using point3d = vec3d; //3D point
@@ -103,7 +103,7 @@ inline double vec3d::norm() const {
     return sqrt(dot(*this, *this));
 }
 
-inline double vec3d::squared_norm() const {
+inline double vec3d::norm_squared() const {
     return dot(*this, *this);
 }
 
