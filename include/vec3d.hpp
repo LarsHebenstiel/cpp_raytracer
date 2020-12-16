@@ -83,6 +83,14 @@ class vec3d {
         inline double norm() const;
 
         inline double norm_squared() const;
+
+        inline static vec3d random() {
+            return vec3d(random_double(), random_double(), random_double());
+        }
+
+        inline static vec3d random(double min, double max) {
+            return vec3d(random_double(min, max), random_double(min, max), random_double(min, max));
+        }
 };
 
 using point3d = vec3d; //3D point
@@ -137,6 +145,26 @@ inline vec3d operator/(vec3d v, double t) {
 
 inline vec3d unit_vector(const vec3d& v) {
     return v / v.norm();
+}
+
+vec3d random_in_unit_sphere() {
+    while(true) {
+        vec3d v = vec3d::random(-1,1);
+        if (v.norm_squared() >= 1) continue;
+        return v;
+    }
+}
+
+vec3d random_unit_vector() {
+    return unit_vector(random_in_unit_sphere());
+}
+vec3d random_in_hemisphere(const vec3d& normal) {
+    vec3d in_unit_sphere = random_in_unit_sphere();
+    // in the same hemisphere as the normal
+    if (dot(in_unit_sphere, normal) > 0.0)
+        return in_unit_sphere;
+    else
+        return -in_unit_sphere;
 }
 
 #endif
