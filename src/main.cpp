@@ -80,10 +80,10 @@ hittable_list random_scene() {
 int main() {
     // Image properties
     const double aspect_ratio = 3.0 / 2.0;
-    const int image_width = 600;
+    const int image_width = 200;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int MSAA_samples_per_pixel = 4;
-    const int MC_samples_per_pixel = 16;
+    const int MSAA_samples_per_pixel = 1;
+    const int MC_samples_per_pixel = 4;
     const int MSAA_subpixel_width = static_cast<int>(sqrt(MSAA_samples_per_pixel));
     const int max_depth = 20;
 
@@ -101,8 +101,7 @@ int main() {
     auto dist_to_focus = 10.0;
     auto aperture = 0.1;
 
-    camera cam(lookfrom, lookat, vup, 20.0, aspect_ratio, aperture, dist_to_focus);
-
+    camera cam(lookfrom, lookat, vup, 10.0, aspect_ratio, aperture, dist_to_focus);
 
     Timer t;
     t.start();

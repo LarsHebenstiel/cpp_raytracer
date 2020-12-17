@@ -22,8 +22,9 @@ const double pi = 3.1415926535897932385;
 inline double degrees_to_radians(double degrees) { return degrees * pi / 180.0; }
 
 inline double random_double(double min, double max) {
+    static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    static std::mt19937 generator(seed);
     static std::uniform_real_distribution<double> distribution(0, 1);
-    static std::mt19937 generator;
     return min + (max - min) * distribution(generator);
 }
 
