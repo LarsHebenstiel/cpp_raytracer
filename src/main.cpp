@@ -36,8 +36,8 @@ int main() {
     const double aspect_ratio = 4.0 / 3.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int MSAA_samples_per_pixel = 4;
-    const int MC_samples_per_pixel = 16;
+    const int MSAA_samples_per_pixel = 16;
+    const int MC_samples_per_pixel = 64;
     const int MSAA_subpixel_width = static_cast<int>(sqrt(MSAA_samples_per_pixel));
     const int max_depth = 10;
 
@@ -50,14 +50,14 @@ int main() {
     hittable_list world;
 
     auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = make_shared<lambertian>(color(0.7, 0.3, 0.3));
-    auto material_left   = make_shared<metal>(color(0.8, 0.8, 0.8), 0.2);
+    auto material_center = make_shared<metal>(color(0.7, 0.3, 0.3),0.1);
+    auto material_left   = make_shared<dielectric>(1.5);
     auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
 
     world.add(make_shared<sphere>(point3d( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(make_shared<sphere>(point3d( 0.0,    0.0, -1.5),   0.5, material_center));
-    world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.0),   0.5, material_left));
-    world.add(make_shared<sphere>(point3d( 1.0,    0.0, -1.0),   0.5, material_right));
+    world.add(make_shared<sphere>(point3d( 0.0,    0.0, -1.2),   0.5, material_left));
+    world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.2),   0.5, material_left));
+    world.add(make_shared<sphere>(point3d( 1.0,    0.0, -1.2),   0.5, material_right));
 
     // Camera
     camera cam;
@@ -76,11 +76,12 @@ int main() {
             
             for (int s = 0; s < MC_samples_per_pixel; s++) {
                 for (int m = 0; m < MSAA_samples_per_pixel; m++) {
-                double u = static_cast<double>(i + MSAA_subpixel_size * (m % MSAA_subpixel_width + random_double(-0.5, 0.5))) / (image_width - 1);
-                double v = static_cast<double>(j + MSAA_subpixel_size * (m / MSAA_subpixel_width + random_double(-0.5, 0.5))) / (image_height - 1);
+                    //use stratified sampling + jitter to emulate blue noise for MSAA
+                    double u = static_cast<double>(i + MSAA_subpixel_size * (m % MSAA_subpixel_width + random_double(-0.5, 0.5))) / (image_width - 1);
+                    double v = static_cast<double>(j + MSAA_subpixel_size * (m / MSAA_subpixel_width + random_double(-0.5, 0.5))) / (image_height - 1);
                 
-                ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, world, max_depth);
+                    ray r = cam.get_ray(u, v);
+                    pixel_color += ray_color(r, world, max_depth);
                 }
             }
             

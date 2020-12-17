@@ -3,6 +3,7 @@
 
 #include "utility.hpp"
 #include "hittable.hpp"
+#include <iostream>
 
 class material {
     public:
@@ -50,6 +51,47 @@ class metal : public material {
             attenuation = albedo;
             return (dot(scattered.direction(), rec.normal) > 0);
         }
+};
+
+class dielectric : public material {
+    public:
+        color albedo;
+        double ir; //index of refraction
+
+        dielectric(const color& c) : albedo { c }, ir { 1.0 } {}
+        dielectric(const color& c, double index_of_refraction) : albedo { c }, ir { index_of_refraction } {}
+        dielectric(double index_of_refraction) : albedo { color(1.0) }, ir { index_of_refraction } {}
+
+        static double schlick_reflectance(double cos, double ref_idx) {
+            // Use Schlick's approximation for reflectance.
+            auto r0 = (1 - ref_idx) / (1 + ref_idx);
+            r0 = r0 * r0;
+            return r0 + (1 - r0) * pow((1 - cos),5);
+        }
+
+        virtual bool scatter(const ray& r_in, const hit_record& rec, 
+            color& attenuation, ray& scattered
+        ) const override {
+            attenuation = albedo;
+            double refraction_ratio = rec.front_face ? (1.0/ir) : ir;
+            vec3d unit_direction = unit_vector(r_in.dir);
+            
+            double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
+            double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+
+            bool cannot_refract = refraction_ratio * sin_theta > 1.0;
+
+            vec3d direction;
+
+            if (cannot_refract || schlick_reflectance(cos_theta, refraction_ratio) > random_double())
+                direction = reflect(unit_direction, rec.normal);
+            else
+                direction = refract(unit_direction, rec.normal, refraction_ratio);
+
+            scattered = ray(rec.p, direction);
+            return true;
+        }
+        
 };
 
 #endif
