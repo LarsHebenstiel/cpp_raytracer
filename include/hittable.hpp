@@ -4,12 +4,15 @@
 #include "vec3d.hpp"
 #include "ray.hpp"
 
+class material;
+
 struct hit_record {
     public:
         double t;
         vec3d normal;
         point3d p;
         bool front_face;
+        shared_ptr<material> mat_ptr;
 
         void set_face_normal(const ray& r, const vec3d& outward_normal) {
             // if we are on front face, dot product is negative
