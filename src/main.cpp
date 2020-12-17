@@ -34,12 +34,12 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 int main() {
     // Image properties
     const double aspect_ratio = 4.0 / 3.0;
-    const int image_width = 400;
+    const int image_width = 200;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int MSAA_samples_per_pixel = 16;
-    const int MC_samples_per_pixel = 64;
+    const int MSAA_samples_per_pixel = 1;
+    const int MC_samples_per_pixel = 256;
     const int MSAA_subpixel_width = static_cast<int>(sqrt(MSAA_samples_per_pixel));
-    const int max_depth = 10;
+    const int max_depth = 20;
 
     assert(MSAA_subpixel_width * MSAA_subpixel_width == MSAA_samples_per_pixel);
 
@@ -50,17 +50,24 @@ int main() {
     hittable_list world;
 
     auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = make_shared<metal>(color(0.7, 0.3, 0.3),0.1);
+    auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
     auto material_left   = make_shared<dielectric>(1.5);
     auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
 
     world.add(make_shared<sphere>(point3d( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(make_shared<sphere>(point3d( 0.0,    0.0, -1.2),   0.5, material_left));
-    world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.2),   0.5, material_left));
-    world.add(make_shared<sphere>(point3d( 1.0,    0.0, -1.2),   0.5, material_right));
+    world.add(make_shared<sphere>(point3d( 0.0,    0.0, -1.0),   0.5, material_center));
+    world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.0),   0.5, material_left));
+    world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.0), -0.45, material_left));
+    world.add(make_shared<sphere>(point3d( 1.0,    0.0, -1.0),   0.5, material_right));
 
     // Camera
-    camera cam;
+    point3d lookfrom(3,3,2);
+    point3d lookat(0,0,-1);
+    vec3d vup(0,1,0);
+    double dist_to_focus = (lookfrom - lookat).norm();
+    double aperture = 0.0;
+
+    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
     Timer t;
     t.start();
@@ -94,8 +101,8 @@ int main() {
     long long timeMilli = timeMicro / 1000;
     std::cerr << "Ray tracing took " << timeMilli <<  " milliseconds" << endl;
     std::cerr << "Ray tracing averaged " <<
-        static_cast<double>(image_width * image_height * MSAA_samples_per_pixel * MC_samples_per_pixel) / timeMicro 
-        <<  " pixel color calculations per microsecond" << endl;
+        static_cast<double>(static_cast<long>(image_width) * static_cast<long>(image_height) * static_cast<long>(MSAA_samples_per_pixel) * static_cast<long>(MC_samples_per_pixel)) / timeMicro 
+        <<  " pixel calculations per microsecond" << endl;
 
     return 0;
 }

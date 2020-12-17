@@ -173,6 +173,14 @@ vec3d random_in_hemisphere(const vec3d& normal) {
         return -in_unit_sphere;
 }
 
+vec3d random_in_unit_disk() {
+    while (true) {
+        vec3d p = vec3d(random_double(-1,1),random_double(-1,1),0);
+        if (p.norm_squared() >= 1) continue;
+        return p;
+    }
+}
+
 vec3d reflect(const vec3d& v, const vec3d& n) {
     return v - 2 * dot(v,n) * n;
 }
