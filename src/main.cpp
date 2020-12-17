@@ -34,10 +34,10 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 int main() {
     // Image properties
     const double aspect_ratio = 4.0 / 3.0;
-    const int image_width = 200;
+    const int image_width = 300;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int MSAA_samples_per_pixel = 1;
-    const int MC_samples_per_pixel = 256;
+    const int MC_samples_per_pixel = 16;
     const int MSAA_subpixel_width = static_cast<int>(sqrt(MSAA_samples_per_pixel));
     const int max_depth = 20;
 
@@ -49,25 +49,43 @@ int main() {
 
     hittable_list world;
 
-    auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
-    auto material_left   = make_shared<dielectric>(1.5);
-    auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
+    auto material_ground = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    // auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
+    // auto material_left   = make_shared<dielectric>(1.5);
+    // auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
 
-    world.add(make_shared<sphere>(point3d( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(make_shared<sphere>(point3d( 0.0,    0.0, -1.0),   0.5, material_center));
-    world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.0),   0.5, material_left));
-    world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.0), -0.45, material_left));
-    world.add(make_shared<sphere>(point3d( 1.0,    0.0, -1.0),   0.5, material_right));
+    // world.add(make_shared<sphere>(point3d( 0.0, -100.5, -1.0), 100.0, material_ground));
+    // world.add(make_shared<sphere>(point3d( 0.0,    0.0, -1.0),   0.5, material_center));
+    // world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.0),   0.5, material_left));
+    // world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.0), -0.45, material_left));
+    // world.add(make_shared<sphere>(point3d( 1.0,    0.0, -1.0),   0.5, material_right));
+    world.add(make_shared<sphere>(point3d( 0.0, -1000.5, -1.0), 1000.0, material_ground));
+    // world.add(make_shared<sphere>(point3d( 0.0,    0.0, 1.0),   0.5, material_center));
+    // world.add(make_shared<sphere>(point3d(-0.5,    0.0, -1.0),   0.5, material_left));
+    // //world.add(make_shared<sphere>(point3d(-0.5,    0.0, -1.0),  -0.4, material_left));
+    // world.add(make_shared<sphere>(point3d( 1.0,    0.0, -1.0),   0.5, material_right));
+    
+    auto skymat = make_shared<lambertian>(color(0,0.4,0.5));
+    world.add(make_shared<sphere>(point3d(0.0, 12.0,10.0),10.0, skymat));
+
+    auto material2 = make_shared<lambertian>(color(0.4, 0.2, 0.1));
+    world.add(make_shared<sphere>(point3d(-4, 1, 0), 1.0, material2));
+
+    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+    world.add(make_shared<sphere>(point3d(4, 1, 0), 1.0, material3));
+
+    auto material1 = make_shared<dielectric>(10);
+    world.add(make_shared<sphere>(point3d(0, 1, 0), 1.0, material1));
 
     // Camera
-    point3d lookfrom(3,3,2);
-    point3d lookat(0,0,-1);
+    point3d lookfrom(13,2,3);
+    point3d lookat(0,2,0);
     vec3d vup(0,1,0);
-    double dist_to_focus = (lookfrom - lookat).norm();
-    double aperture = 0.0;
+    auto dist_to_focus = 10.0;
+    auto aperture = 0.0;
 
-    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+    camera cam(lookfrom, lookat, vup, 20.0, aspect_ratio, aperture, dist_to_focus);
+
 
     Timer t;
     t.start();

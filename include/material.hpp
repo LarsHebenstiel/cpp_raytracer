@@ -66,7 +66,8 @@ class dielectric : public material {
             // Use Schlick's approximation for reflectance.
             auto r0 = (1 - ref_idx) / (1 + ref_idx);
             r0 = r0 * r0;
-            return r0 + (1 - r0) * pow((1 - cos),5);
+            double res = r0 + (1 - r0) * pow((1 - cos),5);
+            return res;
         }
 
         virtual bool scatter(const ray& r_in, const hit_record& rec, 
@@ -77,13 +78,13 @@ class dielectric : public material {
             vec3d unit_direction = unit_vector(r_in.dir);
             
             double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
-            double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+            double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 
             bool cannot_refract = refraction_ratio * sin_theta > 1.0;
 
             vec3d direction;
 
-            if (cannot_refract || schlick_reflectance(cos_theta, refraction_ratio) > random_double())
+            if (cannot_refract || schlick_reflectance(cos_theta, refraction_ratio) > 1.0 - random_double())
                 direction = reflect(unit_direction, rec.normal);
             else
                 direction = refract(unit_direction, rec.normal, refraction_ratio);
