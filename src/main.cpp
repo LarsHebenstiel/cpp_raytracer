@@ -36,8 +36,8 @@ int main() {
     const double aspect_ratio = 4.0 / 3.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int MSAA_samples_per_pixel = 16;
-    const int MC_samples_per_pixel = 8;
+    const int MSAA_samples_per_pixel = 4;
+    const int MC_samples_per_pixel = 16;
     const int MSAA_subpixel_width = static_cast<int>(sqrt(MSAA_samples_per_pixel));
     const int max_depth = 10;
 
@@ -49,10 +49,15 @@ int main() {
 
     hittable_list world;
 
+    auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
     auto material_center = make_shared<lambertian>(color(0.7, 0.3, 0.3));
+    auto material_left   = make_shared<metal>(color(0.8, 0.8, 0.8), 0.2);
+    auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
 
-    world.add(make_shared<sphere>(point3d(0.0,0.0,-1.0),0.5,material_center));
-    world.add(make_shared<sphere>(point3d(0.0,-100.5,-1.0),100,material_center));
+    world.add(make_shared<sphere>(point3d( 0.0, -100.5, -1.0), 100.0, material_ground));
+    world.add(make_shared<sphere>(point3d( 0.0,    0.0, -1.5),   0.5, material_center));
+    world.add(make_shared<sphere>(point3d(-1.0,    0.0, -1.0),   0.5, material_left));
+    world.add(make_shared<sphere>(point3d( 1.0,    0.0, -1.0),   0.5, material_right));
 
     // Camera
     camera cam;

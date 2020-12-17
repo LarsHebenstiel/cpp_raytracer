@@ -91,6 +91,12 @@ class vec3d {
         inline static vec3d random(double min, double max) {
             return vec3d(random_double(min, max), random_double(min, max), random_double(min, max));
         }
+
+        inline bool near_zero() const {
+            // Return true if the vector is close to zero in all dimensions.
+            const auto s = 1e-8;
+            return (this->x < s) && (this->y < s) && (this->z < s);
+        }
 };
 
 using point3d = vec3d; //3D point
@@ -165,6 +171,10 @@ vec3d random_in_hemisphere(const vec3d& normal) {
         return in_unit_sphere;
     else
         return -in_unit_sphere;
+}
+
+vec3d reflect(const vec3d& v, const vec3d& n) {
+    return v - 2 * dot(v,n) * n;
 }
 
 #endif
