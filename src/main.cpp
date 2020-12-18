@@ -1,4 +1,5 @@
 #include<iostream>
+#include<thread>
 
 #include "utility.hpp"
 #include "color.hpp"
