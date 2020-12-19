@@ -5,6 +5,7 @@
 #include <limits>
 #include <memory>
 #include <random>
+#include <chrono>
 
 // Usings
 
@@ -21,11 +22,14 @@ const double pi = 3.1415926535897932385;
 
 inline double degrees_to_radians(double degrees) { return degrees * pi / 180.0; }
 
+//https://stackoverflow.com/questions/21237905/how-do-i-generate-thread-safe-uniform-random-numbers
+//creating a new distribution each time is more efficient than 
+//using a static [0,1) distribution and adjusting the range
 inline double random_double(double min, double max) {
-    static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    static std::mt19937 generator(seed);
-    static std::uniform_real_distribution<double> distribution(0, 1);
-    return min + (max - min) * distribution(generator);
+    static thread_local std::mt19937 gen = std::mt19937(std::chrono::high_resolution_clock::now().time_since_epoch().count() + static_cast<long long>(std::hash<std::thread::id>()(std::this_thread::get_id())));
+
+    std::uniform_real_distribution<double> dist(min, max);
+    return dist(gen);
 }
 
 inline double random_double(double max) {
@@ -45,6 +49,5 @@ inline double clamp(double x, double min, double max) {
 // Common headers
 #include "ray.hpp"
 #include "vec3d.hpp"
-#include "timing.hpp"
 
 #endif

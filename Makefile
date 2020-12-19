@@ -10,7 +10,7 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := ./include
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= -Wall -g -std=c++17 $(INC_FLAGS) -MMD -MP
+CPPFLAGS ?= -Wall -g -std=c++2a $(INC_FLAGS) -MMD -MP
 CXX = g++
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)

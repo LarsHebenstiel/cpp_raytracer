@@ -60,6 +60,10 @@
         "utility": "cpp",
         "vector": "cpp",
         "random": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "future": "cpp",
+        "thread": "cpp",
+        "deque": "cpp",
+        "queue": "cpp"
     }
 }
