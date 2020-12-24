@@ -11,6 +11,10 @@ class material {
 
         virtual bool scatter(const ray& r_in, const hit_record& rec, 
                 color& attenuation, ray& scattered) const = 0;
+        
+        virtual color emitted() const {
+            return color(0.0);
+        }
 };
 
 class lambertian : public material {
@@ -93,6 +97,25 @@ class dielectric : public material {
             return true;
         }
         
+};
+
+class diffuse_light : public material {
+    public:
+        color emit;
+
+        diffuse_light(color c) : emit { c } {}
+        diffuse_light() : emit { color(1.0) } {}
+
+        virtual bool scatter(const ray& r_in, const hit_record& rec, 
+            color& attenuation, ray& scattered
+        ) const override {
+            return false;
+        }
+
+        virtual color emitted() const override {
+            return emit;
+        }
+
 };
 
 #endif

@@ -60,31 +60,46 @@ hittable_list random_scene() {
     return world;
 }
 
+hittable_list caustic_demo() {
+    hittable_list world;
+    
+    auto ground = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(point3d(0,-1000,0), 1000, ground));
+
+    auto glass = make_shared<dielectric>(color(1.0,1.0,1.0),1.5);
+    world.add(make_shared<sphere>(point3d(0,1,0),0.5,glass));
+
+    auto light = make_shared<diffuse_light>(color(8.0));
+    world.add(make_shared<sphere>(point3d(0,5,0),1,light));
+
+    return world;
+    }
+
 int main() {
     // Image properties
-    const double aspect_ratio = 3.0 / 2.0;
-    const int image_width = 400;
+    const double aspect_ratio = 2.0 / 3.0;
+    const int image_width = 200;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
+
     const int MSAA_samples_per_pixel = 4;
-    const int MC_samples_per_pixel = 16;
+    const int MC_samples_per_pixel = 1024;
+
     const int MSAA_subpixel_width = static_cast<int>(sqrt(MSAA_samples_per_pixel));
     const int max_depth = 20;
-
-    assert(MSAA_subpixel_width * MSAA_subpixel_width == MSAA_samples_per_pixel);
 
     const double MSAA_subpixel_size = 1.0 / static_cast<double>(MSAA_subpixel_width);
     
     // World
-    hittable_list world = random_scene();
+    hittable_list world = caustic_demo();
 
     // Camera
-    point3d lookfrom(13,2,3);
-    point3d lookat(0,1,0);
+    point3d lookfrom(0,2,3);
+    point3d lookat(0,0.75,0);
     vec3d vup(0,1,0);
     auto dist_to_focus = 10.0;
-    auto aperture = 0.1;
+    auto aperture = 0.0;
 
-    camera cam(lookfrom, lookat, vup, 20.0, aspect_ratio, aperture, dist_to_focus);
+    camera cam(lookfrom, lookat, vup, 35.0, aspect_ratio, aperture, dist_to_focus);
 
     Timer t;
     t.start();
@@ -92,10 +107,10 @@ int main() {
     // Render
 
     color * pixels = new color[image_width * image_height];
-    const int pixel_block_size = 16;
+    const int pixel_block_size = 30;
     std::queue<int *> q = buildPixelBlocks(image_width, image_height, pixel_block_size, pixel_block_size);
 
-    const int num_of_threads = 4;
+    const int num_of_threads = 2;
     std::future<void> thread_futures [num_of_threads];
     for(int i = 0; i < num_of_threads; i++) {
         thread_futures[i] = std::async(std::launch::async, thread_render, 

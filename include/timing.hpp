@@ -6,7 +6,7 @@
 // https://stackoverflow.com/questions/12231166/timing-algorithm-clock-vs-time-in-c
 class Timer{
     public:
-        std::__1::chrono::steady_clock::time_point t1;
+        std::chrono::steady_clock::time_point t1;
 
         void start() {
             t1 = std::chrono::high_resolution_clock::now();
