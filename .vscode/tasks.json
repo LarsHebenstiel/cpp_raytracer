@@ -9,13 +9,47 @@
     ],
     "tasks": [
 		{
-			"label": "build",
+			"label": "build release",
 			"args": [
 				"make"
 			],
 			"problemMatcher": [
 				"$eslint-compact"
-			]
+			],
+			"group": "build"
+		}
+		,
+		{
+			"label": "build debug",
+			"args": [
+				"make debug"
+			],
+			"problemMatcher": [
+				"$eslint-compact"
+			],
+			"group": "build"
+		}
+		,
+		{
+			"label": "build remake release",
+			"args": [
+				"make remake"
+			],
+			"problemMatcher": [
+				"$eslint-compact"
+			],
+			"group": "build"
+		}
+		,
+		{
+			"label": "make clean",
+			"args": [
+				"make clean"
+			],
+			"problemMatcher": [
+				"$eslint-compact"
+			],
+			"group": "build"
 		}
 	]
 }
