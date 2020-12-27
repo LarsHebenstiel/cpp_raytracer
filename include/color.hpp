@@ -7,6 +7,61 @@
 #include "hittable.hpp"
 #include "material.hpp"
 
+color ray_color(const ray& r, const hittable& world, int depth) {
+    hit_record rec;
+
+    if (depth <= 0)
+        return color(0,0,0);
+
+    // min time is 0.0001 to get rid of shadow acne
+    if (world.hit(r, 0.0001, infinity, rec)) {
+        ray scattered;
+        color attenuation;
+        color emitted = rec.mat_ptr->emitted();
+
+        if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+            return emitted;
+            
+        return emitted + attenuation * ray_color(scattered, world, depth-1);
+    }
+
+    //background color
+    return color(0.0);
+
+    vec3d unit_dir = unit_vector(r.dir);
+    double t = 0.5 * (unit_dir.y + 1);
+    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+}
+
+// https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
+// possibly upgrade to https://github.com/TheRealMJP/BakingLab/blob/master/BakingLab/ACES.hlsl
+// convert HDR to LDR
+color ACESFilm(const color& x) {
+    static double a = 2.51;
+    static double b = 0.03;
+    static double c = 2.43;
+    static double d = 0.59;
+    static double e = 0.14;
+    color res = (x * (a * x + b)) / (x * (c * x + d) + e);
+    return clamp(res, 0.0, 1.0);
+}
+
+color applyGamma(color& col, double gamma) {
+    return color(
+        pow(col.x, 1 / gamma),
+        pow(col.y, 1 / gamma),
+        pow(col.z, 1 / gamma)
+    );
+}
+
+color applyGamma_2(color& col) {
+    return color(
+        sqrt(col.x),
+        sqrt(col.y),
+        sqrt(col.z)
+    );
+}
+
 void write_color(std::ostream &out, const color& pixel_color, 
                     int MSAA_samples_per_pixel, int MC_samples_per_pixel) {
     double scale = 1.0 / static_cast<double>(MSAA_samples_per_pixel * MC_samples_per_pixel);
@@ -15,10 +70,15 @@ void write_color(std::ostream &out, const color& pixel_color,
     double g = sqrt(pixel_color.y * scale);
     double b = sqrt(pixel_color.z * scale);
 
+    color new_col = color(r, g, b);
+
+    //if we wish to apply tone mapping
+    //color new_col = ACESFilm(color(r,g,b));
+
     // Write the translated [0,255] value of each color component.
-    out << static_cast<int>(256 * clamp(r, 0, 0.9999)) << ' '
-        << static_cast<int>(256 * clamp(g, 0, 0.9999)) << ' '
-        << static_cast<int>(256 * clamp(b, 0, 0.9999)) << '\n';
+    out << static_cast<int>(256 * clamp(new_col.x, 0, 0.9999)) << ' '
+        << static_cast<int>(256 * clamp(new_col.y, 0, 0.9999)) << ' '
+        << static_cast<int>(256 * clamp(new_col.z, 0, 0.9999)) << '\n';
 }
 
 std::queue<int*> buildPixelBlocks(int image_width, int image_height, 
@@ -54,29 +114,6 @@ void write_image(std::ostream& out, color *pixels, int image_width, int image_he
         }
     }
 
-}
-
-color ray_color(const ray& r, const hittable& world, int depth) {
-    hit_record rec;
-
-    if (depth <= 0)
-        return color(0,0,0);
-
-    // min time is 0.0001 to get rid of shadow acne
-    if (world.hit(r, 0.0001, infinity, rec)) {
-        ray scattered;
-        color attenuation;
-        color emitted = rec.mat_ptr->emitted();
-
-        if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-            return emitted;
-            
-        return emitted + attenuation * ray_color(scattered, world, depth-1);
-    }
-
-    vec3d unit_dir = unit_vector(r.dir);
-    double t = 0.5 * (unit_dir.y + 1);
-    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 
 #endif

@@ -145,8 +145,12 @@ inline vec3d operator*(const vec3d &v, double t) {
     return t * v;
 }
 
-inline vec3d operator/(vec3d v, double t) {
+inline vec3d operator/(const vec3d& v, double t) {
     return (1/t) * v;
+}
+
+inline vec3d operator/(const vec3d& v, const vec3d& u) {
+    return vec3d(v.x / u.x, v.y / u.y, v.z / u.z);
 }
 
 inline vec3d unit_vector(const vec3d& v) {
@@ -179,6 +183,19 @@ vec3d random_in_unit_disk() {
         if (p.norm_squared() >= 1) continue;
         return p;
     }
+}
+
+// https://blogs.sas.com/content/iml/2020/10/19/random-points-in-triangle.html
+vec3d random_in_triangle(point3d& p0, point3d& p1, point3d& p2) {
+    vec3d a = p1 - p0;
+    vec3d b = p2 - p0;
+    double u = random_double(0.0, 1.0);
+    double v = random_double(0.0, 1.0);
+    if (u + v > 1.0) {
+        u = 1 - u;
+        v = 1 - v;
+    }
+    return p0 + u * a + b * v;
 }
 
 vec3d reflect(const vec3d& v, const vec3d& n) {

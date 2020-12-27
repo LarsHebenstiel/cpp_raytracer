@@ -106,9 +106,7 @@ class diffuse_light : public material {
         diffuse_light(color c) : emit { c } {}
         diffuse_light() : emit { color(1.0) } {}
 
-        virtual bool scatter(const ray& r_in, const hit_record& rec, 
-            color& attenuation, ray& scattered
-        ) const override {
+        virtual bool scatter(const ray&, const hit_record&, color&, ray& ) const override {
             return false;
         }
 
@@ -116,6 +114,29 @@ class diffuse_light : public material {
             return emit;
         }
 
+};
+
+class emissive_lambertian : public lambertian {
+    public:
+        color emit;
+
+        emissive_lambertian(const color& a, const color& e) : lambertian(a), emit{ e } {}
+
+        virtual color emitted() const override {
+            return emit;
+        }
+};
+
+class emissive_metal : public metal {
+    public:
+        color emit;
+
+        emissive_metal(const color& a, const color&e) : metal(a), emit{ e } {}
+        emissive_metal(const color& a, const color&e, double f) : metal(a, f), emit{ e } {}
+
+        virtual color emitted() const override {
+            return emit;
+        }
 };
 
 #endif

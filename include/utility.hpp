@@ -50,4 +50,10 @@ inline double clamp(double x, double min, double max) {
 #include "ray.hpp"
 #include "vec3d.hpp"
 
+// More functions that rely on common headers
+
+vec3d clamp(const vec3d& v, double min, double max) {
+    return vec3d(clamp(v.x, min, max), clamp(v.y, min, max), clamp(v.z, min, max));
+}
+
 #endif

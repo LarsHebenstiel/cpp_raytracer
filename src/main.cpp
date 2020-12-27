@@ -15,11 +15,11 @@ using std::endl;
 int main() {
     // Image properties
     const double aspect_ratio = 16.0 / 9.0;
-    const int image_width = 400;
+    const int image_width = 200;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
 
     const int MSAA_samples_per_pixel = 4;
-    const int MC_samples_per_pixel = 16;
+    const int MC_samples_per_pixel = 512;
 
     const int MSAA_subpixel_width = static_cast<int>(sqrt(MSAA_samples_per_pixel));
     const int max_depth = 20;
@@ -27,14 +27,14 @@ int main() {
     const double MSAA_subpixel_size = 1.0 / static_cast<double>(MSAA_subpixel_width);
     
     // World
-    hittable_list world = random_moving_scene();
+    hittable_list world = lights_scene();
 
     // Camera
-    point3d lookfrom(13,2,3);
-    point3d lookat(0,0,0);
+    point3d lookfrom(7,2,7);
+    point3d lookat(0,1,0);
     vec3d vup(0,1,0);
-    auto dist_to_focus = 10.0;
-    auto aperture = 0.1;
+    auto dist_to_focus = (lookfrom - lookat).norm();
+    auto aperture = 1.0;
     double time0 = 0.0;
     double time1 = 1.0;
 
@@ -45,7 +45,7 @@ int main() {
 
     // Render
 
-    color * pixels = new color[image_width * image_height];
+    color *pixels = new color[image_width * image_height];
     const int pixel_block_size = 30;
     std::queue<int *> q = buildPixelBlocks(image_width, image_height, pixel_block_size, pixel_block_size);
 

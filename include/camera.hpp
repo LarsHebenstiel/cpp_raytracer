@@ -46,7 +46,25 @@ class camera {
         }
 
         ray get_ray(double u, double v) const {
-            vec3d rd = lens_radius * random_in_unit_disk();
+            // circular aperture
+            //vec3d rd = lens_radius * random_in_unit_disk();
+
+            //triangular aperture
+            point3d p0(1,0.5,0);
+            point3d p1(-1,0.5,0);
+            point3d p2(0,-1,0);
+
+            p0 *= lens_radius;
+            p1 *= lens_radius;
+            p2 *= lens_radius;
+
+            vec3d rd = random_in_triangle(p0, p1, p2);
+
+            //half of the time, flip the y axis to build the star of david
+            if (random_double() > 0.5) {
+                rd.y = -rd.y;
+            }
+
             vec3d offset = right * rd.x + up * rd.y;
 
             return ray(

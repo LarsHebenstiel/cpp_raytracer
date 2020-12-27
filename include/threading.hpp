@@ -12,6 +12,7 @@
 #include "hittable.hpp"
 #include <mutex>
 #include "camera.hpp"
+#include "color.hpp"
 
 //use from writing to cout from threads
 //std::mutex cout_mtx
