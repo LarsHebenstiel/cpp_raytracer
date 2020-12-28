@@ -23,6 +23,18 @@ class moving_sphere : public hittable {
 
         point3d center(double time) const;
 
+        virtual bool bounding_box(double time0, double time1, aabb& output_box) const override {
+            aabb b0(
+                center(time0) - vec3d(radius),
+                center(time0) + vec3d(radius)
+            );
+            aabb b1(
+                center(time1) - vec3d(radius),
+                center(time1) + vec3d(radius)
+            );
+            output_box = surrounding_box(b0, b1);
+            return true;
+        }
 };
 
 point3d moving_sphere::center(double time) const {

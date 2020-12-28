@@ -26,7 +26,7 @@ color ray_color(const ray& r, const hittable& world, int depth) {
     }
 
     //background color
-    return color(0.0);
+    //return color(0.0);
 
     vec3d unit_dir = unit_vector(r.dir);
     double t = 0.5 * (unit_dir.y + 1);

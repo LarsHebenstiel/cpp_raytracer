@@ -5,6 +5,7 @@
 #include "camera.hpp"
 #include "timing.hpp"
 #include "threading.hpp"
+#include "bvh_node.hpp"
 
 #include "sample_scenes.hpp"
 
@@ -25,20 +26,20 @@ int main() {
     const int max_depth = 20;
 
     const double MSAA_subpixel_size = 1.0 / static_cast<double>(MSAA_subpixel_width);
-    
-    // World
-    hittable_list world = lights_scene();
 
     // Camera
     point3d lookfrom(7,2,7);
     point3d lookat(0,1,0);
     vec3d vup(0,1,0);
     auto dist_to_focus = (lookfrom - lookat).norm();
-    auto aperture = 1.0;
+    auto aperture = 0.1;
     double time0 = 0.0;
     double time1 = 1.0;
 
     camera cam(lookfrom, lookat, vup, 20.0, aspect_ratio, aperture, dist_to_focus, time0, time1);
+        
+    // World constructed with BVH
+    const hittable_list world(make_shared<bvh_node>(lights_scene(), time0, time1));
 
     Timer t;
     t.start();
