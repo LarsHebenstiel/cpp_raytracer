@@ -7,6 +7,8 @@
 #include <random>
 #include <chrono>
 
+#include "macros.hpp"
+
 // Usings
 
 using std::shared_ptr;
@@ -15,33 +17,33 @@ using std::sqrt;
 
 // Constants
 
-const double infinity = std::numeric_limits<double>::infinity();
-const double pi = 3.1415926535897932385;
-const double invpi = 1 / pi;
+const Float infinity = std::numeric_limits<Float>::infinity();
+const Float pi = 3.1415926535897932385;
+const Float invpi = 1 / pi;
 
 // Functions
 
-inline double degrees_to_radians(double degrees) { return degrees * pi / 180.0; }
+inline Float degrees_to_radians(Float degrees) { return degrees * pi / 180.0; }
 
 //https://stackoverflow.com/questions/21237905/how-do-i-generate-thread-safe-uniform-random-numbers
 //creating a new distribution each time is more efficient than 
 //using a static [0,1) distribution and adjusting the range
-inline double random_double(double min, double max) {
+inline Float random_Float(Float min, Float max) {
     static thread_local std::mt19937 gen = std::mt19937(std::chrono::high_resolution_clock::now().time_since_epoch().count() + static_cast<long long>(std::hash<std::thread::id>()(std::this_thread::get_id())));
 
-    std::uniform_real_distribution<double> dist(min, max);
+    std::uniform_real_distribution<Float> dist(min, max);
     return dist(gen);
 }
 
-inline double random_double(double max) {
-    return random_double(0.0, max);
+inline Float random_Float(Float max) {
+    return random_Float(0.0, max);
 }
 
-inline double random_double() {
-    return random_double(0.0, 1.0);
+inline Float random_Float() {
+    return random_Float(0.0, 1.0);
 }
 
-inline double clamp(double x, double min, double max) {
+inline Float clamp(Float x, Float min, Float max) {
     if (x < min) return min;
     if (x > max) return max;
     return x;
@@ -49,12 +51,12 @@ inline double clamp(double x, double min, double max) {
 
 // Common headers
 #include "ray.hpp"
-#include "vec3d.hpp"
+#include "vec3.hpp"
 
 // More functions that rely on common headers
 
-vec3d clamp(const vec3d& v, double min, double max) {
-    return vec3d(clamp(v.x, min, max), clamp(v.y, min, max), clamp(v.z, min, max));
+vec3 clamp(const vec3& v, Float min, Float max) {
+    return vec3(clamp(v.x, min, max), clamp(v.y, min, max), clamp(v.z, min, max));
 }
 
-#endif
+#endif //UTILITY_H

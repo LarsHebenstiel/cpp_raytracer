@@ -5,29 +5,29 @@
 
 class camera {
     public:
-        point3d origin;
-        point3d lower_left_corner;
-        vec3d horizontal;
-        vec3d vertical;
-        vec3d forward, right, up;
-        double lens_radius;
-        double time0, time1; //open close times for the shutter
+        point3 origin;
+        point3 lower_left_corner;
+        vec3 horizontal;
+        vec3 vertical;
+        vec3 forward, right, up;
+        Float lens_radius;
+        Float time0, time1; //open close times for the shutter
 
         camera(
-            point3d lookfrom,
-            point3d lookat,
-            vec3d vup,
-            double vert_fov,
-            double aspect_ratio,
-            double aperture,
-            double focal_distance,
-            double time0,
-            double time1
+            point3 lookfrom,
+            point3 lookat,
+            vec3 vup,
+            Float vert_fov,
+            Float aspect_ratio,
+            Float aperture,
+            Float focal_distance,
+            Float time0,
+            Float time1
         ) {
-            double theta = degrees_to_radians(vert_fov);
-            double h = tan(theta / 2.0);
-            double view_height = 2.0 * h;
-            double view_width = aspect_ratio * view_height;
+            Float theta = degrees_to_radians(vert_fov);
+            Float h = tan(theta / 2.0);
+            Float view_height = 2.0 * h;
+            Float view_width = aspect_ratio * view_height;
             
             //use specified camera position to get the named vectors
             this->forward = unit_vector(lookat - lookfrom);
@@ -45,34 +45,34 @@ class camera {
             this->time1 = time1;
         }
 
-        ray get_ray(double u, double v) const {
+        ray get_ray(Float u, Float v) const {
             // circular aperture
-            //vec3d rd = lens_radius * random_in_unit_disk();
+            //vec3 rd = lens_radius * random_in_unit_disk();
 
             //triangular aperture
-            point3d p0(1,0.5,0);
-            point3d p1(-1,0.5,0);
-            point3d p2(0,-1,0);
+            point3 p0(1,0.5,0);
+            point3 p1(-1,0.5,0);
+            point3 p2(0,-1,0);
 
             p0 *= lens_radius;
             p1 *= lens_radius;
             p2 *= lens_radius;
 
-            vec3d rd = random_in_triangle(p0, p1, p2);
+            vec3 rd = random_in_triangle(p0, p1, p2);
 
             //half of the time, flip the y axis to build the star of david
-            if (random_double() > 0.5) {
+            if (random_Float() > 0.5) {
                 rd.y = -rd.y;
             }
 
-            vec3d offset = right * rd.x + up * rd.y;
+            vec3 offset = right * rd.x + up * rd.y;
 
             return ray(
                 origin + offset, 
                 lower_left_corner + u * horizontal + v * vertical - origin - offset,
-                random_double(time0, time1)
+                random_Float(time0, time1)
             );
         }
 };
 
-#endif
+#endif //CAMERA_H

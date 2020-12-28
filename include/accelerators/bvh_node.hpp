@@ -1,13 +1,13 @@
 #ifndef BVH_NODE_H
 #define BVH_NODE_H
 
-#include "utility.hpp"
-#include "hittable.hpp"
-#include "hittable_list.hpp"
-
 #include <vector> 
 #include <algorithm>
 #include <iostream>
+
+#include "utility.hpp"
+#include "hittable.hpp"
+#include "hittable_list.hpp"
 
 class bvh_node : public hittable {
     public:
@@ -16,25 +16,25 @@ class bvh_node : public hittable {
         aabb box;
 
         bvh_node();
-        bvh_node(const hittable_list& list, double time0, double time1)
+        bvh_node(const hittable_list& list, Float time0, Float time1)
         : bvh_node(list.objects, 0, list.objects.size(), time0, time1) {}
 
         bvh_node(
             const std::vector<shared_ptr<hittable>>& objs,
-            int start, int end, double time0, double time1, int axis = 0
+            int start, int end, Float time0, Float time1, int axis = 0
         );
 
-        virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override;
+        virtual bool hit(const ray& r, Float t_min, Float t_max, hit_record& rec) const override;
 
-        virtual bool bounding_box(double time0, double time1, aabb& output_box) const override;
+        virtual bool bounding_box(Float time0, Float time1, aabb& output_box) const override;
 };
 
-bool bvh_node::bounding_box(double, double, aabb& output_box) const {
+bool bvh_node::bounding_box(Float, Float, aabb& output_box) const {
     output_box = box;
     return true;
 }
 
-bool bvh_node::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool bvh_node::hit(const ray& r, Float t_min, Float t_max, hit_record& rec) const {
     if(!box.hit(r, t_min, t_max))
         return false;
 
@@ -73,7 +73,7 @@ bool box_compare_z (const shared_ptr<hittable> a, const shared_ptr<hittable> b) 
 
 bvh_node::bvh_node(
     const std::vector<shared_ptr<hittable>>& objs,
-    int start, int end, double time0, double time1, int axis
+    int start, int end, Float time0, Float time1, int axis
 ) {
     auto objects = objs;
 
@@ -107,4 +107,4 @@ bvh_node::bvh_node(
     box = surrounding_box(box_l, box_r);
 }
 
-#endif
+#endif //BVH_NODE_H

@@ -6,7 +6,7 @@ SRC_DIRS := src
 SRCS := $(shell find $(SRC_DIRS) -name "*.cpp")
 OBJS := $(SRCS:%.cpp=%.o)
 
-INC_DIRS := include
+INC_DIRS = include/core include/shapes include/accelerators
 INC_FLAGS := $(addprefix -I ,$(INC_DIRS))
 
 CPPFLAGS := -Wall -Wextra -std=c++2a $(INC_FLAGS) -MMD -MP
@@ -69,6 +69,7 @@ prep:
 remake: clean all
 
 clean:
+	@echo $(INC_DIRS)
 	$(RM) -r $(BUILD_DIR)
 
 # not quite happy with this solution to deal with dependencies - Lars

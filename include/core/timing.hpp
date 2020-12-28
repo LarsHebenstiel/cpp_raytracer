@@ -23,4 +23,4 @@ class Timer{
         }
 };
 
-#endif
+#endif //TIMING_H

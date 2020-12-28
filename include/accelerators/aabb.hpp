@@ -4,17 +4,20 @@
 #include "hittable.hpp"
 #include "utility.hpp"
 
-class aabb {
+/*
+ * Axis-aligned bounding box
+ */
+class aabb{
     public:
-        point3d min;
-        point3d max;
+        point3 min;
+        point3 max;
 
         aabb() {}
-        aabb(const point3d& min, const point3d& max) : min{ min }, max{ max } {}
+        aabb(const point3& min, const point3& max) : min{ min }, max{ max } {}
 
-        bool hit(const ray& r, double t_min, double t_max) const {
-            double t0 = fmin((min.x - r.orig.x) / r.dir.x, (max.x - r.orig.x) / r.dir.x);
-            double t1 = fmax((min.x - r.orig.x) / r.dir.x, (max.x - r.orig.x) / r.dir.x);
+        bool hit(const ray& r, Float t_min, Float t_max) const {
+            Float t0 = fmin((min.x - r.orig.x) / r.dir.x, (max.x - r.orig.x) / r.dir.x);
+            Float t1 = fmax((min.x - r.orig.x) / r.dir.x, (max.x - r.orig.x) / r.dir.x);
 
             t_min = t0 > t_min ? t0 : t_min;
             t_max = t1 < t_max? t1 : t_max;
@@ -42,15 +45,15 @@ class aabb {
 };
 
 aabb surrounding_box(aabb& b0, aabb& b1) {
-    point3d small(fmin(b0.min.x, b1.min.x),
+    point3 small(fmin(b0.min.x, b1.min.x),
                   fmin(b0.min.y, b1.min.y),
                   fmin(b0.min.z, b1.min.z));
 
-    point3d big(fmin(b0.max.x, b1.max.x),
+    point3 big(fmin(b0.max.x, b1.max.x),
                   fmin(b0.max.y, b1.max.y),
                   fmin(b0.max.z, b1.max.z));
 
     return aabb(small, big);
 }
 
-#endif
+#endif //AABB_H

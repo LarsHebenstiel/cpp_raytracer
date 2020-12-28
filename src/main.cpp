@@ -1,3 +1,8 @@
+//#define USE_FLOAT_AS_DOUBLE
+
+// preprocessor macros
+#include "macros.hpp"
+
 #include<iostream>
 #include<thread>
 
@@ -11,35 +16,39 @@
 
 using std::cout;
 using std::cin;
+using std::cerr;
 using std::endl;
 
 int main() {
+    cerr << "Size of type \"Float\": " << sizeof(Float) << endl;
+    
     // Image properties
-    const double aspect_ratio = 16.0 / 9.0;
-    const int image_width = 200;
+    const Float aspect_ratio = 16.0 / 9.0;
+    const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
 
     const int MSAA_samples_per_pixel = 4;
-    const int MC_samples_per_pixel = 512;
+    const int MC_samples_per_pixel = 16;
 
     const int MSAA_subpixel_width = static_cast<int>(sqrt(MSAA_samples_per_pixel));
     const int max_depth = 20;
 
-    const double MSAA_subpixel_size = 1.0 / static_cast<double>(MSAA_subpixel_width);
+    const Float MSAA_subpixel_size = 1.0 / static_cast<Float>(MSAA_subpixel_width);
 
     // Camera
-    point3d lookfrom(7,2,7);
-    point3d lookat(0,1,0);
-    vec3d vup(0,1,0);
+    point3 lookfrom(7,2,7);
+    point3 lookat(0,0,0);
+    vec3 vup(0,1,0);
     auto dist_to_focus = (lookfrom - lookat).norm();
     auto aperture = 0.1;
-    double time0 = 0.0;
-    double time1 = 1.0;
+    Float time0 = 0.0;
+    Float time1 = 1.0;
 
     camera cam(lookfrom, lookat, vup, 20.0, aspect_ratio, aperture, dist_to_focus, time0, time1);
         
     // World constructed with BVH
-    const hittable_list world(make_shared<bvh_node>(lights_scene(), time0, time1));
+    //const hittable_list world(make_shared<bvh_node>(debug_bvh_sphere(), time0, time1));
+    const hittable_list world = debug_bvh_sphere();
 
     Timer t;
     t.start();
@@ -59,26 +68,26 @@ int main() {
             MSAA_subpixel_width, MSAA_subpixel_size, max_depth);
     }
     
-    std::cerr << num_of_threads << " Threads started, awaiting completion" << endl;
+    cerr << num_of_threads << " Threads started, awaiting completion" << endl;
     
     while(q.size() > 0) {
-        std::cerr << "\rPixel blocks remaining: " << q.size() << "    " << std::flush;
+        cerr << "\rPixel blocks remaining: " << q.size() << "    " << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    std::cerr << "\rPixel blocks remaining: " << 0 << "    " << std::flush;
+    cerr << "\rPixel blocks remaining: " << 0 << "    " << std::flush;
     
     //make sure all threads are done
     for(auto& f : thread_futures) f.get();
 
     long long timeMicro = t.elapsedMicro();
     long long timeMilli = timeMicro / 1000;
-    std::cerr << "\nDone calculating.\n";
-    std::cerr << "Ray tracing took " << timeMilli <<  " milliseconds" << endl;
-    std::cerr << "Ray tracing averaged " <<
-        static_cast<double>(static_cast<long>(image_width) * static_cast<long>(image_height) * static_cast<long>(MSAA_samples_per_pixel) * static_cast<long>(MC_samples_per_pixel)) / timeMicro 
+    cerr << "\nDone calculating.\n";
+    cerr << "Ray tracing took " << timeMilli <<  " milliseconds" << endl;
+    cerr << "Ray tracing averaged " <<
+        static_cast<Float>(static_cast<long>(image_width) * static_cast<long>(image_height) * static_cast<long>(MSAA_samples_per_pixel) * static_cast<long>(MC_samples_per_pixel)) / timeMicro 
         <<  " pixel calculations per microsecond" << endl;
-    std::cerr << "Writing data to image now." << endl;
+    cerr << "Writing data to image now." << endl;
 
     write_image(std::cout, pixels, image_width, image_height, MSAA_samples_per_pixel, MC_samples_per_pixel);
 

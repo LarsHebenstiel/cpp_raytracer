@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <queue>
+
 #include "utility.hpp"
 #include "hittable.hpp"
 #include "material.hpp"
@@ -28,8 +29,8 @@ color ray_color(const ray& r, const hittable& world, int depth) {
     //background color
     //return color(0.0);
 
-    vec3d unit_dir = unit_vector(r.dir);
-    double t = 0.5 * (unit_dir.y + 1);
+    vec3 unit_dir = unit_vector(r.dir);
+    Float t = 0.5 * (unit_dir.y + 1);
     return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 
@@ -37,16 +38,16 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 // possibly upgrade to https://github.com/TheRealMJP/BakingLab/blob/master/BakingLab/ACES.hlsl
 // convert HDR to LDR
 color ACESFilm(const color& x) {
-    static double a = 2.51;
-    static double b = 0.03;
-    static double c = 2.43;
-    static double d = 0.59;
-    static double e = 0.14;
+    static Float a = 2.51;
+    static Float b = 0.03;
+    static Float c = 2.43;
+    static Float d = 0.59;
+    static Float e = 0.14;
     color res = (x * (a * x + b)) / (x * (c * x + d) + e);
     return clamp(res, 0.0, 1.0);
 }
 
-color applyGamma(color& col, double gamma) {
+color applyGamma(color& col, Float gamma) {
     return color(
         pow(col.x, 1 / gamma),
         pow(col.y, 1 / gamma),
@@ -64,11 +65,11 @@ color applyGamma_2(color& col) {
 
 void write_color(std::ostream &out, const color& pixel_color, 
                     int MSAA_samples_per_pixel, int MC_samples_per_pixel) {
-    double scale = 1.0 / static_cast<double>(MSAA_samples_per_pixel * MC_samples_per_pixel);
+    Float scale = 1.0 / static_cast<Float>(MSAA_samples_per_pixel * MC_samples_per_pixel);
     //apply sqrt for gamma correction with gamma = 2;
-    double r = sqrt(pixel_color.x * scale);
-    double g = sqrt(pixel_color.y * scale);
-    double b = sqrt(pixel_color.z * scale);
+    Float r = sqrt(pixel_color.x * scale);
+    Float g = sqrt(pixel_color.y * scale);
+    Float b = sqrt(pixel_color.z * scale);
 
     color new_col = color(r, g, b);
 
@@ -116,4 +117,4 @@ void write_image(std::ostream& out, color *pixels, int image_width, int image_he
 
 }
 
-#endif
+#endif //COLOR_H

@@ -5,8 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "vec3d.hpp"
-#include "ray.hpp"
+#include "utility.hpp"
 #include "hittable.hpp"
 
 using std::shared_ptr;
@@ -23,15 +22,15 @@ class hittable_list : public hittable {
         void add(shared_ptr<hittable> object) { objects.push_back(object); }
 
         virtual bool hit(
-            const ray& r, double t_min, double t_max, hit_record& rec) const override;
+            const ray& r, Float t_min, Float t_max, hit_record& rec) const override;
 
-        virtual bool bounding_box(double time0, double time1, aabb& output_box) const override;
+        virtual bool bounding_box(Float time0, Float time1, aabb& output_box) const override;
 };
 
-bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool hittable_list::hit(const ray& r, Float t_min, Float t_max, hit_record& rec) const {
     hit_record temp_rec;
     bool hit_anything = false;
-    double closest_hit = t_max;
+    Float closest_hit = t_max;
 
     for (const auto& object : objects) {
         if (object->hit(r, t_min, closest_hit, temp_rec)) {
@@ -44,7 +43,7 @@ bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& re
     return hit_anything;
 }
 
-bool hittable_list::bounding_box(double time0, double time1, aabb& output_box) const  {
+bool hittable_list::bounding_box(Float time0, Float time1, aabb& output_box) const  {
     if (objects.empty()) return false;
 
     aabb temp_box;
@@ -59,4 +58,4 @@ bool hittable_list::bounding_box(double time0, double time1, aabb& output_box) c
     return true;
 }
 
-#endif
+#endif //HITTABLE_LIST
