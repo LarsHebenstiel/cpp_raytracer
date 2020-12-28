@@ -100,7 +100,7 @@ bvh_node::bvh_node(
     aabb box_l, box_r;
 
     if (  ! left->bounding_box(time0, time1, box_l)
-       || ! right->bounding_box(time0, time1, box_l)
+       || ! right->bounding_box(time0, time1, box_r)
     )
         std::cerr << "No bounding box in bvh_node constructor.\n";
 

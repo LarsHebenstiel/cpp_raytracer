@@ -49,9 +49,9 @@ aabb surrounding_box(aabb& b0, aabb& b1) {
                   fmin(b0.min.y, b1.min.y),
                   fmin(b0.min.z, b1.min.z));
 
-    point3 big(fmin(b0.max.x, b1.max.x),
-                  fmin(b0.max.y, b1.max.y),
-                  fmin(b0.max.z, b1.max.z));
+    point3 big(fmax(b0.max.x, b1.max.x),
+                  fmax(b0.max.y, b1.max.y),
+                  fmax(b0.max.z, b1.max.z));
 
     return aabb(small, big);
 }

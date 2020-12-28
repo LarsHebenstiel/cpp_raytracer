@@ -37,7 +37,7 @@ int main() {
 
     // Camera
     point3 lookfrom(7,2,7);
-    point3 lookat(0,0,0);
+    point3 lookat(0.0,1.0,0);
     vec3 vup(0,1,0);
     auto dist_to_focus = (lookfrom - lookat).norm();
     auto aperture = 0.1;
@@ -47,8 +47,7 @@ int main() {
     camera cam(lookfrom, lookat, vup, 20.0, aspect_ratio, aperture, dist_to_focus, time0, time1);
         
     // World constructed with BVH
-    //const hittable_list world(make_shared<bvh_node>(debug_bvh_sphere(), time0, time1));
-    const hittable_list world = debug_bvh_sphere();
+    const hittable_list world(make_shared<bvh_node>(lights_scene(), time0, time1));
 
     Timer t;
     t.start();

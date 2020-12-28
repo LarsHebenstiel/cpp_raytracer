@@ -200,6 +200,9 @@ hittable_list debug_bvh_sphere() {
 
     auto mat = make_shared<lambertian>(color(0.8,0.05,0.1));
     world.add(make_shared<sphere>(point3(0.0),1.0,mat));
+    world.add(make_shared<sphere>(point3(0.0, 3.0, 0.0),1.0,mat));
+    world.add(make_shared<sphere>(point3(-1.0, 1.5, 1.0),1.0,mat));
+    world.add(make_shared<sphere>(point3(1.0, 1.5, -1.0),1.0,mat));
 
     return world;
 }
