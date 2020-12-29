@@ -84,19 +84,7 @@ class vec3 {
 
         inline Float norm_squared() const;
 
-        inline static vec3 random() {
-            return vec3(random_Float(), random_Float(), random_Float());
-        }
-
-        inline static vec3 random(Float min, Float max) {
-            return vec3(random_Float(min, max), random_Float(min, max), random_Float(min, max));
-        }
-
-        inline bool near_zero() const {
-            // Return true if the vector is close to zero in all dimensions.
-            const auto s = 1e-8;
-            return (this->x < s) && (this->y < s) && (this->z < s);
-        }
+        inline bool near_zero() const;
 };
 
 using point3 = vec3; //3D point
@@ -157,9 +145,23 @@ inline vec3 unit_vector(const vec3& v) {
     return v / v.norm();
 }
 
+inline vec3 random_vec() {
+    return vec3(random_Float(), random_Float(), random_Float());
+}
+
+inline vec3 random_vec(Float min, Float max) {
+    return vec3(random_Float(min, max), random_Float(min, max), random_Float(min, max));
+}
+
+inline bool vec3::near_zero() const {
+    // Return true if the vector is close to zero in all dimensions.
+    static const Float s = 1e-5;
+    return (this->x < s) && (this->y < s) && (this->z < s);
+}
+
 vec3 random_in_unit_sphere() {
     while(true) {
-        vec3 v = vec3::random(-1,1);
+        vec3 v = random_vec(-1,1);
         if (v.norm_squared() >= 1) continue;
         return v;
     }

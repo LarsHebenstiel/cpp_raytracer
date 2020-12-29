@@ -13,7 +13,10 @@ class aabb{
         point3 max;
 
         aabb() {}
-        aabb(const point3& min, const point3& max) : min{ min }, max{ max } {}
+        aabb(const point3& min, const point3& max) 
+        : min{ point3(fmin(min.x, max.x),fmin(min.y, max.y),fmin(min.z, max.z)) }
+        , max{ point3(fmax(min.x, max.x),fmax(min.y, max.y),fmax(min.z, max.z)) } 
+        {}
 
         bool hit(const ray& r, Float t_min, Float t_max) const {
             Float t0 = fmin((min.x - r.orig.x) / r.dir.x, (max.x - r.orig.x) / r.dir.x);
@@ -44,7 +47,7 @@ class aabb{
         }
 };
 
-aabb surrounding_box(aabb& b0, aabb& b1) {
+aabb surrounding_box(const aabb& b0, const aabb& b1) {
     point3 small(fmin(b0.min.x, b1.min.x),
                   fmin(b0.min.y, b1.min.y),
                   fmin(b0.min.z, b1.min.z));
@@ -52,6 +55,18 @@ aabb surrounding_box(aabb& b0, aabb& b1) {
     point3 big(fmax(b0.max.x, b1.max.x),
                   fmax(b0.max.y, b1.max.y),
                   fmax(b0.max.z, b1.max.z));
+
+    return aabb(small, big);
+}
+
+aabb surrounding_box(const aabb& b0, const point3& p) {
+    point3 small(fmin(b0.min.x, p.x),
+                  fmin(b0.min.y, p.y),
+                  fmin(b0.min.z, p.z));
+
+    point3 big(fmax(b0.max.x, p.x),
+                  fmax(b0.max.y, p.y),
+                  fmax(b0.max.z, p.z));
 
     return aabb(small, big);
 }

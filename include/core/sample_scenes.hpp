@@ -6,12 +6,13 @@
 #include "material.hpp"
 #include "sphere.hpp"
 #include "moving_sphere.hpp"
+#include "triangle.hpp"
 
 hittable_list random_scene() {
     hittable_list world;
 
     auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
+    world.add(make_shared<sphere>(point3(0,-500,0), 500, ground_material));
 
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
@@ -23,12 +24,12 @@ hittable_list random_scene() {
 
                 if (choose_mat < 0.8) {
                     // diffuse
-                    auto albedo = color::random() * color::random();
+                    auto albedo = random_vec() * random_vec();
                     sphere_material = make_shared<lambertian>(albedo);
                     world.add(make_shared<sphere>(center, 0.2, sphere_material));
                 } else if (choose_mat < 0.95) {
                     // metal
-                    auto albedo = color::random(0.5, 1);
+                    auto albedo = random_vec(0.5, 1);
                     auto fuzz = random_Float(0, 0.5);
                     sphere_material = make_shared<metal>(albedo, fuzz);
                     world.add(make_shared<sphere>(center, 0.2, sphere_material));
@@ -57,7 +58,7 @@ hittable_list random_moving_scene() {
     hittable_list world;
 
     auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
+    world.add(make_shared<sphere>(point3(0,-500,0), 500, ground_material));
 
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
@@ -69,13 +70,13 @@ hittable_list random_moving_scene() {
 
                 if (choose_mat < 0.8) {
                     // diffuse
-                    auto albedo = color::random() * color::random();
+                    auto albedo = random_vec() * random_vec();
                     sphere_material = make_shared<lambertian>(albedo);
                     vec3 vel(0, random_Float(0.0,0.5),0);
                     world.add(make_shared<moving_sphere>(center, vel, 0.2, sphere_material));
                 } else if (choose_mat < 0.95) {
                     // metal
-                    auto albedo = color::random(0.5, 1);
+                    auto albedo = random_vec(0.5, 1);
                     auto fuzz = random_Float(0, 0.5);
                     sphere_material = make_shared<metal>(albedo, fuzz);
                     world.add(make_shared<sphere>(center, 0.2, sphere_material));
@@ -104,7 +105,7 @@ hittable_list moving_sphere_demo() {
     hittable_list world;
 
     auto ground = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground));
+    world.add(make_shared<sphere>(point3(0,-500,0), 500, ground));
 
     auto mat = make_shared<lambertian>(color(0.8,0.1,0.3));
     world.add(make_shared<moving_sphere>(point3(0.0,1.0,0.0),vec3(0.0,0.5,0.0), 1,mat));
@@ -116,7 +117,7 @@ hittable_list caustic_demo() {
     hittable_list world;
     
     auto ground = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground));
+    world.add(make_shared<sphere>(point3(0,-500,0), 500, ground));
 
     auto glass = make_shared<dielectric>(color(1.0,1.0,1.0),1.5);
     world.add(make_shared<sphere>(point3(0,1,0),0.5,glass));
@@ -131,7 +132,7 @@ hittable_list emissive_lambertian_demo() {
     hittable_list world;
     
     auto ground = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground));
+    world.add(make_shared<sphere>(point3(0,-500,0), 500, ground));
 
     auto light1 = make_shared<emissive_lambertian>(color(0.2,0.1,0.8),color(0.8,0.1,0.2));
     world.add(make_shared<sphere>(point3(1,1,-1), 1, light1));
@@ -152,7 +153,7 @@ hittable_list lights_scene() {
     hittable_list world;
 
     auto ground = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground));
+    world.add(make_shared<sphere>(point3(0,-500,0), 500, ground));
 
     auto light = make_shared<diffuse_light>(color(80.0,70.0,60.0) + 10 * random_unit_vector());
     for (int i = 0; i < 30; i++) {
@@ -203,6 +204,47 @@ hittable_list debug_bvh_sphere() {
     world.add(make_shared<sphere>(point3(0.0, 3.0, 0.0),1.0,mat));
     world.add(make_shared<sphere>(point3(-1.0, 1.5, 1.0),1.0,mat));
     world.add(make_shared<sphere>(point3(1.0, 1.5, -1.0),1.0,mat));
+
+    return world;
+}
+
+std::vector<shared_ptr<triangle>> test_tri_mesh(shared_ptr<material> mat_ptr) {
+    std::vector<shared_ptr<triangle>> vec;
+
+    const int nTriangles = 1;
+    const int nVertices = 3;
+
+    int * vertex_indicies = new int[3] {0,2,1};
+    point3 * p = new point3[3] {point3(0.0), point3(1.0,0.0,0.0), point3(0.0,0.0,1.0)};
+    vec3 * n = new vec3[3] {unit_vector(vec3(0.0, 1.0, 0.0)), unit_vector(vec3(0.0, 1.0, 0.0)), unit_vector(vec3(0.0, 1.0, 0.0))};
+
+    auto mesh = make_shared<TriangleMesh>(nTriangles, vertex_indicies, nVertices, p, n, mat_ptr);
+    
+    vec.push_back(make_shared<triangle>(mesh, 0));
+
+    return vec;
+}
+
+hittable_list tri_mesh_test() {
+    hittable_list world;
+
+    auto rose_mirror = make_shared<metal>(color(1.0,0.8,0.9));
+    std::vector<shared_ptr<triangle>> v = test_tri_mesh(rose_mirror);
+
+    for (const auto& h : v) world.add(h);
+
+    auto red = make_shared<lambertian>(color(0.8,0.05,0.1));
+    world.add(make_shared<sphere>(point3(0.0,0.0,0.0),0.1,red));
+    world.add(make_shared<sphere>(point3(1.0,0.0,0.0),0.1,red));
+    world.add(make_shared<sphere>(point3(0.0,0.0,1.0),0.1,red));
+
+    auto blue = make_shared<lambertian>(color(0.1,0.1,0.8));
+    auto green = make_shared<lambertian>(color(0.1,0.8,0.15));
+    auto gray = make_shared<lambertian>(color(0.2));
+
+    world.add(make_shared<sphere>(point3(0.15,0.2,-0.25), 0.1, green));
+    world.add(make_shared<sphere>(point3(-0.25,0.2,0.15), 0.1, blue));
+    world.add(make_shared<sphere>(point3(0.0,-0.3,0.0),0.1, gray));
 
     return world;
 }

@@ -65,6 +65,7 @@
         "thread": "cpp",
         "deque": "cpp",
         "queue": "cpp",
-        "__undef_macros": "cpp"
+        "__undef_macros": "cpp",
+        "fstream": "cpp"
     }
 }

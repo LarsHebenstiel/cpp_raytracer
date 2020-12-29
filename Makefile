@@ -9,7 +9,7 @@ OBJS := $(SRCS:%.cpp=%.o)
 INC_DIRS = include/core include/shapes include/accelerators
 INC_FLAGS := $(addprefix -I ,$(INC_DIRS))
 
-CPPFLAGS := -Wall -Wextra -std=c++2a $(INC_FLAGS) -MMD -MP
+CPPFLAGS := -Wall -Wextra -Wno-unused-parameter -std=c++2a $(INC_FLAGS) -MMD -MP
 CXX := g++
 
 #
