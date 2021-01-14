@@ -9,16 +9,16 @@ class Timer{
         std::chrono::steady_clock::time_point t1;
 
         void start() {
-            t1 = std::chrono::high_resolution_clock::now();
+            t1 = std::chrono::steady_clock::now();
         }
 
         long long elapsedMilli() {
-            auto t2 = std::chrono::high_resolution_clock::now();
+            auto t2 = std::chrono::steady_clock::now();
             return std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
         }
 
         long long elapsedMicro() {
-            auto t2 = std::chrono::high_resolution_clock::now();
+            auto t2 = std::chrono::steady_clock::now();
             return std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
         }
 };

@@ -6,6 +6,7 @@
 #include <memory>
 #include <random>
 #include <chrono>
+#include <string>
 
 #include "macros.hpp"
 
@@ -22,6 +23,43 @@ const Float pi = 3.1415926535897932385;
 const Float invpi = 1 / pi;
 
 // Functions
+
+std::vector<std::string> split(const std::string &phrase, const std::string &delim) {
+    std::vector<std::string> res;
+    std::string s(phrase);
+    size_t pos = 0;
+    std::string token;
+
+    while ((pos = s.find(delim)) != std::string::npos) {
+        token = s.substr(0, pos);
+        res.push_back(token);
+        s.erase(0, pos + delim.length());
+    }
+    res.push_back(s);
+
+    return res;
+}
+
+void writeStringAsHex(std::string &s, std::ostream &os) {
+    os << std::hex;
+
+    for (size_t i = 0; i < s.length(); i++) {
+        os << static_cast<int>(s[i]) << " ";
+    }
+
+    os << "\n"
+       << std::dec;
+}
+
+int count(std::string &s, char c) {
+    int res = 0;
+
+    for (size_t i = 0; i < s.length(); i++)
+        if (s[i] == c)
+            res++;
+
+    return res;
+}
 
 inline Float degrees_to_radians(Float degrees) { return degrees * pi / 180.0; }
 

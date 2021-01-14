@@ -7,6 +7,7 @@
 #include "sphere.hpp"
 #include "moving_sphere.hpp"
 #include "triangle.hpp"
+#include "parse_tri_mesh.hpp"
 
 hittable_list random_scene() {
     hittable_list world;
@@ -155,8 +156,8 @@ hittable_list lights_scene() {
     auto ground = make_shared<lambertian>(color(0.5, 0.5, 0.5));
     world.add(make_shared<sphere>(point3(0,-500,0), 500, ground));
 
-    auto light = make_shared<diffuse_light>(color(80.0,70.0,60.0) + 10 * random_unit_vector());
     for (int i = 0; i < 30; i++) {
+        auto light = make_shared<diffuse_light>(color(80.0,70.0,60.0) + 10 * random_unit_vector());
         Float x = random_Float(-12,5);
         Float z = random_Float(-12,5);
         Float y = 2.75 + random_Float(0,1) + x / 15 + z / 15;
@@ -166,7 +167,8 @@ hittable_list lights_scene() {
     }
 
     for (int i = 0; i < 5; i++) {
-        world.add(make_shared<sphere>(point3(7 - i, 2.75, 2 + i), 0.05,light));
+        auto light = make_shared<diffuse_light>(1.75 * color(80.0,70.0,60.0) + 10 * random_unit_vector());
+        world.add(make_shared<sphere>(point3(5 - i, 2.75, i), 0.05,light));
     }
 
     auto red = make_shared<lambertian>(color(0.8,0.15,0.1));
@@ -222,29 +224,24 @@ std::vector<shared_ptr<triangle>> test_tri_mesh(shared_ptr<material> mat_ptr) {
     
     vec.push_back(make_shared<triangle>(mesh, 0));
 
+    delete[] vertex_indicies;
+    delete[] p;
+    delete[] n;
+
     return vec;
 }
 
-hittable_list tri_mesh_test() {
+hittable_list test_obj_file(const std::string& filename, std::ostream& log) {
     hittable_list world;
 
+    auto ground = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(point3(0,-501,0), 500, ground));
+
     auto rose_mirror = make_shared<metal>(color(1.0,0.8,0.9));
-    std::vector<shared_ptr<triangle>> v = test_tri_mesh(rose_mirror);
+    auto red = make_shared<lambertian>(color(0.8,0.05,0.1));
+    std::vector<shared_ptr<triangle>> v = build_mesh(filename, red, log);
 
     for (const auto& h : v) world.add(h);
-
-    auto red = make_shared<lambertian>(color(0.8,0.05,0.1));
-    world.add(make_shared<sphere>(point3(0.0,0.0,0.0),0.1,red));
-    world.add(make_shared<sphere>(point3(1.0,0.0,0.0),0.1,red));
-    world.add(make_shared<sphere>(point3(0.0,0.0,1.0),0.1,red));
-
-    auto blue = make_shared<lambertian>(color(0.1,0.1,0.8));
-    auto green = make_shared<lambertian>(color(0.1,0.8,0.15));
-    auto gray = make_shared<lambertian>(color(0.2));
-
-    world.add(make_shared<sphere>(point3(0.15,0.2,-0.25), 0.1, green));
-    world.add(make_shared<sphere>(point3(-0.25,0.2,0.15), 0.1, blue));
-    world.add(make_shared<sphere>(point3(0.0,-0.3,0.0),0.1, gray));
 
     return world;
 }

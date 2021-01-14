@@ -8,6 +8,9 @@
 # Output image files
 *.ppm
 
+# Log files
+*.log
+
 # Prerequisites
 *.d
 

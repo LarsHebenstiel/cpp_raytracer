@@ -20,6 +20,7 @@ class hittable_list : public hittable {
 
         void clear() { objects.clear(); }
         void add(shared_ptr<hittable> object) { objects.push_back(object); }
+        void add(std::vector<shared_ptr<hittable>> objs) { for(auto& obj : objs) objects.push_back(obj); }
 
         virtual bool hit(
             const ray& r, Float t_min, Float t_max, hit_record& rec) const override;

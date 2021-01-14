@@ -6,9 +6,6 @@
 #include "aabb.hpp"
 #include "material.hpp"
 
-#include <string>
-#include <stdio.h>
-#include <vector>
 #include <memory>
 
 struct TriangleMesh {
@@ -28,10 +25,10 @@ struct TriangleMesh {
         std::unique_ptr<vec3[]> n;
 
         TriangleMesh(
-            int nTriangles, const int *vertex_indicies, int nVertices, 
+            int nTriangles, const int *vertex_indices, int nVertices, 
             const point3 *p, const vec3 *n, std::shared_ptr<material> m) 
             : nVertices{ nVertices }, nTriangles{ nTriangles },
-              vertex_indicies{ vertex_indicies, vertex_indicies + 3 * nTriangles}, 
+              vertex_indicies{ vertex_indices, vertex_indices + 3 * nTriangles}, 
               mat_ptr{ m }
             {
                 // copy over data
@@ -87,37 +84,32 @@ bool triangle::hit(const ray& r, Float t_min, Float t_max, hit_record& rec) cons
     vec3 pvec = cross(r.dir, e2); //used for det and baryU
     Float det = (dot(pvec, e1));
 
-    if(det < 1e-5f)
+    if(det < 1e-5 && det > -1e-5)
         //determinant is zero, happens when ray is parallel to triangle
         return false;
 
     vec3 tvec = r.orig - a;
-    // We should be multiplying by inv_det here, we do that later for efficiency
-    Float baryU = dot(pvec, tvec);
+    Float inv_det = 1 / det;
+    
+    Float baryU = dot(pvec, tvec) * inv_det;
 
     //test to see if baryU is outside of triangle
-    if (baryU < 0.0f || baryU > det) {
+    if (baryU < 0.0f || baryU > 1.0) {
         return false;
     }
 
     vec3 qvec = cross(tvec, e1);
-    //similarly missing inv_det like above baryU
-    Float baryV = dot(qvec, r.dir);
+    Float baryV = dot(qvec, r.dir) * inv_det;
 
     //test to see if baryV is outside of triangle
-    if (baryV < 0.0f || baryV + baryU > det) {
+    if (baryV < 0.0 || baryV + baryU > 1.0) {
         return false;
     }
 
-    //now we know we intersect, so NOW calculate inv_det
-    Float inv_det = 1 / det;
     Float t = dot(qvec, e2) * inv_det;
 
     if (t < t_min || t > t_max)
         return false;
-    
-    baryU *= inv_det;
-    baryV *= inv_det;
 
     Float baryW = 1 - baryU - baryV;
 
@@ -126,7 +118,7 @@ bool triangle::hit(const ray& r, Float t_min, Float t_max, hit_record& rec) cons
     if (mesh->n) {
         n = baryU * mesh->n[v[0]] + baryV * mesh->n[v[1]] + baryW * mesh->n[v[2]];
     } else {
-        n = cross(e1, e2);
+        n = unit_vector(cross(e1, e2));
     }
 
     rec.t = t;
@@ -137,18 +129,7 @@ bool triangle::hit(const ray& r, Float t_min, Float t_max, hit_record& rec) cons
     return true;
 }
 
-std::vector<shared_ptr<triangle>> build_mesh(std::string filename) {
-    std::vector<shared_ptr<triangle>> vec;
-
-    FILE *file = fopen(filename.c_str(),"r");
-
-    char instruction;
-
-    while (!feof(file)) {
-        fscanf(file, "", instruction);
-    }
-
-    return vec;
-}
+// if (baryU > 0.03 && baryW > 0.03 & baryV > 0.03 && baryU < 0.97 && baryV < 0.97 && baryW < 0.97)
+//         return false;
 
 #endif //TRIANGLE_H
